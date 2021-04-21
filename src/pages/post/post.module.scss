@@ -1,1 +1,107 @@
-// TODO
+.container {
+    img {
+      max-width: 100%;
+    }
+  
+    article {
+      header {
+        margin-bottom: 4rem;
+  
+        h1 {
+          margin-bottom: 1.5rem;
+  
+          font-size: 3rem;
+  
+          letter-spacing: -0.5px;
+  
+          color: var(--heading);
+        }
+  
+        .updated {
+          display: block;
+  
+          margin: 1rem 0 0;
+  
+          font-style: italic;
+        }
+      }
+  
+      main {
+        p a {
+          color: var(--highlight);
+  
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+  
+        h2 {
+          margin: 2.75rem 0;
+  
+          font-size: 2.25rem;
+        }
+      }
+  
+      hr {
+        margin: 3.75rem 0 3rem;
+  
+        border-color: var(--body);
+        border-bottom-width: 0;
+      }
+  
+      section.postPagination {
+        display: flex;
+  
+        margin-bottom: 5rem;
+  
+        span {
+          a {
+            width: fit-content;
+  
+            display: block;
+  
+            margin-top: 0.25rem;
+  
+            color: var(--highlight);
+            font-weight: 600;
+  
+            transition: filter 0.2s;
+  
+            &:hover {
+              filter: brightness(0.5);
+            }
+          }
+  
+          &.nextPage {
+            margin-left: auto;
+  
+            text-align: right;
+          }
+        }
+      }
+  
+      aside a {
+        display: block;
+  
+        margin-top: 5rem;
+        padding: 1.125rem 0;
+  
+        border-radius: 0.25rem;
+  
+        background: var(--heading);
+  
+        font-size: 1.125rem;
+        font-weight: 600;
+  
+        text-align: center;
+  
+        color: var(--background);
+  
+        transition: filter 0.2s;
+  
+        &:hover {
+          filter: brightness(0.5);
+        }
+      }
+    }
+  }
