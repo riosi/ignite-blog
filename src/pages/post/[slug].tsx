@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect} from 'react';
 
 import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import { format } from 'date-fns';
@@ -51,7 +51,7 @@ interface PostProps {
   };
 }
 
-export default function Post({ post, pagination }: PostProps) {
+export default function Post({ post, pagination, preview }: PostProps) {
   const router = useRouter();
 
   const readTime = useMemo(() => {
@@ -71,6 +71,28 @@ export default function Post({ post, pagination }: PostProps) {
 
     return Math.ceil(words?.length / HUMAN_READ_WORDS_PER_MINUTE);
   }, [post]);
+
+  const commentsSection = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const hasScript = commentsSection?.current.querySelector('.utterances');
+
+    if (hasScript) {
+      hasScript.remove();
+    }
+
+    const utteranceScript = document.createElement('script');
+
+    utteranceScript.src = 'https://utteranc.es/client.js';
+    utteranceScript.crossOrigin = 'anonymous';
+    utteranceScript.async = true;
+    utteranceScript.setAttribute('repo', 'riosi/ignite-blog');
+    utteranceScript.setAttribute('issue-term', 'pathname');
+    utteranceScript.setAttribute('theme', 'github-dark');
+
+    commentsSection.current?.appendChild(utteranceScript);
+  }, [post]);
+
 
   return (
       <>
@@ -115,6 +137,17 @@ export default function Post({ post, pagination }: PostProps) {
                 <FiClock />
                 {readTime ? `${readTime} min` : 'Tempo de leitura'}
               </span>
+
+              {post?.last_publication_date && (
+                <span className={styles.updated}>
+                  * editado em
+                  {format(
+                    new Date(post?.last_publication_date),
+                    " dd MMM yyyy', às' HH:mm",
+                    { locale: ptBR }
+                  )}
+                </span>
+                )}
             </div>
           </header>
 
@@ -154,6 +187,16 @@ export default function Post({ post, pagination }: PostProps) {
               )}
             </section>
           )}
+
+    <footer ref={commentsSection} />
+
+  {preview && (
+    <aside>
+    <Link href="/api/exit-preview">
+      <a>Sair do modo Preview</a>
+    </Link>
+  </aside>
+  )}
         </article>
       </div>
     </>
@@ -178,11 +221,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({ params, preview =false, previewData = {} }) => {
   const { slug } = params;
+  const { ref } = previewData;
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = preview && ref ? await prismic.getSingle('posts', { ref }) : await prismic.getByUID('posts', String(slug), {});
 
   if (!response) {
     return {
@@ -196,6 +240,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.first_publication_date !== response.last_publication_date ? response.last_publication_date : null,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -237,6 +282,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post,
+      preview,
       pagination: nextPage || prevPage ? pagination : null,
     },
   };
