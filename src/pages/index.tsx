@@ -89,6 +89,7 @@ export default function Home({ postsPagination }: HomeProps) {
             Carregar mais posts
           </button>
         )} 
+
       </div>
   );
 }

@@ -123,19 +123,21 @@ export default function Post({ post, pagination, preview }: PostProps) {
                 {post?.first_publication_date
                   ? format(
                       new Date(post?.first_publication_date),
-                      'dd MMM yyy',
-                      { locale: ptBR }
+                      'dd MMM yyyy',
+                      {
+                        locale: ptBR,
+                      }
                     )
                   : 'Data de publicação'}
               </time>
+
               <span>
                 <FiUser />
                 {post?.data?.author ?? 'Autor'}
               </span>
 
               <span>
-                <FiClock />
-                {readTime ? `${readTime} min` : 'Tempo de leitura'}
+                <FiClock /> {readTime ? `${readTime} min` : 'Tempo de leitura'}
               </span>
 
               {post?.last_publication_date && (
@@ -147,7 +149,7 @@ export default function Post({ post, pagination, preview }: PostProps) {
                     { locale: ptBR }
                   )}
                 </span>
-                )}
+              )}
             </div>
           </header>
 
